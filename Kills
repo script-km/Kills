@@ -1,0 +1,126 @@
+-- Services
+local Players = game:GetService("Players")
+local TeleportService = game:GetService("TeleportService")
+
+local LocalPlayer = Players.LocalPlayer
+local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+
+-- Load Rayfield UI
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+-- Create Main Window
+local Window = Rayfield:CreateWindow({
+    Name = "Killing only",
+    LoadingTitle = "By khem",
+    LoadingSubtitle = "script ni khem",
+    ConfigurationSaving = {
+        Enabled = false,
+    }
+})
+
+-- Create Main Tab
+local Tab = Window:CreateTab("Main", 4483362458)
+
+-- Auto Kill toggle variable
+local AutoKillEnabled = false
+
+-- Function to equip Punch tool
+local function EquipPunch()
+    local tool = LocalPlayer.Backpack:FindFirstChild("Punch")
+    if tool then
+        LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):EquipTool(tool)
+    end
+end
+
+-- Function to auto punch
+local function DoPunch()
+    local char = LocalPlayer.Character
+    if not char then return end
+
+    local punch = LocalPlayer.Backpack:FindFirstChild("Punch") or char:FindFirstChild("Punch")  
+    if punch then  
+        if punch:FindFirstChild("attackTime") then  
+            punch.attackTime.Value = 0.065  
+        end  
+        -- simulate activation  
+        pcall(function()  
+            punch:Activate()  
+        end)  
+    end
+end
+
+-- Function to run auto kill loop
+local function AutoKillLoop()
+    task.spawn(function()
+        while AutoKillEnabled do
+            local char = LocalPlayer.Character
+            if char then
+                -- Auto equip Punch
+                EquipPunch()
+
+                -- Auto punch  
+                DoPunch()  
+
+                -- Hit detection (auto kill players)  
+                local rHand = char:FindFirstChild("RightHand")  
+                local lHand = char:FindFirstChild("LeftHand")  
+
+                if rHand and lHand then  
+                    for _, target in ipairs(Players:GetPlayers()) do  
+                        if target ~= LocalPlayer and target.Character then  
+                            local root = target.Character:FindFirstChild("HumanoidRootPart")  
+                            if root then  
+                                firetouchinterest(rHand, root, 1)  
+                                firetouchinterest(lHand, root, 1)  
+                                firetouchinterest(rHand, root, 0)  
+                                firetouchinterest(lHand, root, 0)  
+                            end  
+                        end  
+                    end  
+                end  
+            end  
+            task.wait(0.1) -- adjust speed  
+        end  
+    end)
+end
+
+-- Function to teleport automatically (Tiny Island)
+local function AutoTeleport()
+    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(
+            -31.8626194, 6.0588026, 2087.88672, 
+            -0.999396682, -9.72631931e-09, 0.034730725, 
+            -6.63278898e-09, 1, 8.91870684e-08, 
+            -0.034730725, 8.8902901e-08, -0.999396682
+        )
+    end
+end
+
+-- Add Toggle: Auto Kill (with auto equip, punch, and auto teleport)
+Tab:CreateToggle({
+    Name = "Auto Kill All Players",
+    CurrentValue = true, -- enabled by default
+    Flag = "AutoKillAllPlayers",
+    Callback = function(Value)
+        AutoKillEnabled = Value
+        if AutoKillEnabled then
+            AutoTeleport()  -- 🚀 teleport when auto kill starts
+            AutoKillLoop()
+        else
+            warn("Auto Kill All Players disabled")
+        end
+    end,
+})
+
+-- 🔥 Start Auto Kill & Teleport automatically on execution
+AutoKillEnabled = true
+AutoTeleport()  -- 🚀 teleport at startup
+AutoKillLoop()
+
+-- ♻️ Automatic Rejoin every 30 seconds
+task.spawn(function()
+    while true do
+        task.wait(30) -- wait 30 seconds
+        TeleportService:Teleport(game.PlaceId, LocalPlayer)
+    end
+end)
