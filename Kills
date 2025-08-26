@@ -9,7 +9,7 @@ local WhitelistedUsers = {
 }
 
 if not WhitelistedUsers[LocalPlayer.Name] then
-    LocalPlayer:Kick("You are not whitelisted to use this script.")
+    LocalPlayer:Kick("You are not whitelisted to use this script🫵.")
     return
 end
 
@@ -121,7 +121,7 @@ end
 
 -- GUI Toggles
 Tab:CreateToggle({
-    Name = "Mode 1: Auto Kill + NaN + Lock + Auto Rejoin",
+    Name = "(OP) Auto Kill + Auto Rejoin",
     CurrentValue = MemoryState,
     Callback = function(Value)
         SaveMemory(Value)
@@ -139,7 +139,7 @@ Tab:CreateToggle({
 })
 
 Tab:CreateToggle({
-    Name = "Mode 2: Auto Kill + NaN + Lock (No Rejoin)",
+    Name = "(OP2) Auto Kill (No Rejoin)",
     CurrentValue = false,
     Callback = function(Value)
         if Value then
@@ -155,7 +155,7 @@ Tab:CreateToggle({
 })
 
 Tab:CreateToggle({
-    Name = "Mode 3: Auto Kill Only",
+    Name = Normal Auto kill",
     CurrentValue = false,
     Callback = function(Value)
         if Value then
