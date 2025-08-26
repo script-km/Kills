@@ -10,9 +10,9 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 -- Create Main Window
 local Window = Rayfield:CreateWindow({
-    Name = "Killing only",
+    Name = "Killing only☠️",
     LoadingTitle = "By khem",
-    LoadingSubtitle = "script ni khem",
+    LoadingSubtitle = "MUSCLE LEGENDS 💪",
     ConfigurationSaving = {
         Enabled = false,
     }
