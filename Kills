@@ -2,46 +2,56 @@
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
--- Add your username(s) here
 local WhitelistedUsers = {
-    ["alleah182010"] = true, -- your username
-    ["gorgeportabes"] = true, -- add more if needed
-    ["OG_playerXxjustinexX"] = true,
+    ["alleah182010"] = true,
+    ["gorgeportabes"] = true,
 }
 
--- Check whitelist
 if not WhitelistedUsers[LocalPlayer.Name] then
-    -- Not whitelisted, kick player
     LocalPlayer:Kick("You are not whitelisted to use this script.")
-    return -- stop script execution
+    return
 end
 
---// Continue with your script below this line
-------------------------------------------------------
+-- Services
 local TeleportService = game:GetService("TeleportService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-
--- Load Rayfield UI
+-- Rayfield GUI
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-
--- Create Main Window
 local Window = Rayfield:CreateWindow({
     Name = "Killing only☠️",
     LoadingTitle = "By khem",
     LoadingSubtitle = "MUSCLE LEGENDS 💪",
-    ConfigurationSaving = {
-        Enabled = false,
-    }
 })
 
--- Create Main Tab
-local Tab = Window:CreateTab("Main💩", 4483362458)
+local Tab = Window:CreateTab("Main", 4483362458)
 
--- Auto Kill toggle variable
+-- Vars
 local AutoKillEnabled = false
+local autoSizeLoop
+local RejoinEnabled = false
+local LockPosition = CFrame.new(-31.8626, 6.0588, 2087.8867)
 
--- Function to equip Punch tool
+-- File memory setup (Mode 1)
+local fileName = "AutoKillMode1.json"
+
+local function SaveMemory(state)
+    if writefile then
+        writefile(fileName, tostring(state))
+    end
+end
+
+local function LoadMemory()
+    if isfile and isfile(fileName) then
+        local content = readfile(fileName)
+        return content == "true"
+    end
+    return false
+end
+
+local MemoryState = LoadMemory()
+
+-- Functions
 local function EquipPunch()
     local tool = LocalPlayer.Backpack:FindFirstChild("Punch")
     if tool then
@@ -49,97 +59,127 @@ local function EquipPunch()
     end
 end
 
--- Function to auto punch (super bilis)
 local function DoPunch()
     local char = LocalPlayer.Character
     if not char then return end
-
-    local punch = LocalPlayer.Backpack:FindFirstChild("Punch") or char:FindFirstChild("Punch")  
-    if punch then  
-        if punch:FindFirstChild("attackTime") then  
-            punch.attackTime.Value = 0.001 -- sobrang bilis punch  
-        end  
-        -- simulate activation spam  
-        for i = 1,5 do  -- mag activate ng maraming beses per loop
-            pcall(function()  
-                punch:Activate()  
-            end)  
+    local punch = LocalPlayer.Backpack:FindFirstChild("Punch") or char:FindFirstChild("Punch")
+    if punch then
+        if punch:FindFirstChild("attackTime") then
+            punch.attackTime.Value = 0.001
         end
+        for i = 1, 5 do pcall(function() punch:Activate() end) end
     end
 end
 
--- Function to run auto kill loop (super bilis)
-local function AutoKillLoop()
+local function AutoKillLoop(lockPosition)
     task.spawn(function()
         while AutoKillEnabled do
             local char = LocalPlayer.Character
-            if char then
-                -- Auto equip Punch
+            if char and char:FindFirstChild("HumanoidRootPart") then
+                if lockPosition then
+                    char.HumanoidRootPart.CFrame = lockPosition
+                end
                 EquipPunch()
-
-                -- Auto punch  
-                DoPunch()  
-
-                -- Hit detection (auto kill players)  
-                local rHand = char:FindFirstChild("RightHand")  
-                local lHand = char:FindFirstChild("LeftHand")  
-
-                if rHand and lHand then  
-                    for _, target in ipairs(Players:GetPlayers()) do  
-                        if target ~= LocalPlayer and target.Character then  
-                            local root = target.Character:FindFirstChild("HumanoidRootPart")  
-                            if root then  
-                                firetouchinterest(rHand, root, 1)  
-                                firetouchinterest(lHand, root, 1)  
-                                firetouchinterest(rHand, root, 0)  
-                                firetouchinterest(lHand, root, 0)  
-                            end  
-                        end  
-                    end  
-                end  
-            end  
-            task.wait(0.005) -- sobrang bilis loop (halos instant)  
-        end  
+                DoPunch()
+                local rHand = char:FindFirstChild("RightHand")
+                local lHand = char:FindFirstChild("LeftHand")
+                if rHand and lHand then
+                    for _, target in ipairs(Players:GetPlayers()) do
+                        if target ~= LocalPlayer and target.Character then
+                            local root = target.Character:FindFirstChild("HumanoidRootPart")
+                            if root then
+                                firetouchinterest(rHand, root, 1)
+                                firetouchinterest(lHand, root, 1)
+                                firetouchinterest(rHand, root, 0)
+                                firetouchinterest(lHand, root, 0)
+                            end
+                        end
+                    end
+                end
+            end
+            task.wait(0.01)
+        end
     end)
 end
 
--- Function to teleport automatically (Tiny Island)
-local function AutoTeleport()
-    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(
-            -31.8626194, 6.0588026, 2087.88672, 
-            -0.999396682, -9.72631931e-09, 0.034730725, 
-            -6.63278898e-09, 1, 8.91870684e-08, 
-            -0.034730725, 8.8902901e-08, -0.999396682
-        )
-    end
+local function StartAutoSizeNaN()
+    if autoSizeLoop then return end
+    autoSizeLoop = task.spawn(function()
+        while AutoKillEnabled do
+            pcall(function()
+                ReplicatedStorage.rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", 0/0)
+            end)
+            task.wait()
+        end
+    end)
 end
 
--- Add Toggle: Auto Kill (with auto equip, punch, and auto teleport)
+local function StopAutoSizeNaN()
+    if autoSizeLoop then task.cancel(autoSizeLoop) autoSizeLoop = nil end
+end
+
+-- GUI Toggles
 Tab:CreateToggle({
-    Name = "Auto Kill All Players",
-    CurrentValue = true, -- enabled by default
-    Flag = "AutoKillAllPlayers",
+    Name = "Mode 1: Auto Kill + NaN + Lock + Auto Rejoin",
+    CurrentValue = MemoryState,
     Callback = function(Value)
-        AutoKillEnabled = Value
-        if AutoKillEnabled then
-            AutoTeleport()  --  teleport when auto kill starts
-            AutoKillLoop()
+        SaveMemory(Value)
+        if Value then
+            RejoinEnabled = true
+            AutoKillEnabled = true
+            AutoKillLoop(LockPosition)
+            StartAutoSizeNaN()
         else
-            warn("Auto Kill All Players disabled")
+            RejoinEnabled = false
+            AutoKillEnabled = false
+            StopAutoSizeNaN()
         end
     end,
 })
 
---  Start Auto Kill & Teleport automatically on execution
-AutoKillEnabled = true
-AutoTeleport()  --  teleport at startup
-AutoKillLoop()
+Tab:CreateToggle({
+    Name = "Mode 2: Auto Kill + NaN + Lock (No Rejoin)",
+    CurrentValue = false,
+    Callback = function(Value)
+        if Value then
+            RejoinEnabled = false
+            AutoKillEnabled = true
+            AutoKillLoop(LockPosition)
+            StartAutoSizeNaN()
+        else
+            AutoKillEnabled = false
+            StopAutoSizeNaN()
+        end
+    end,
+})
 
---  Automatic Rejoin every 30 seconds
+Tab:CreateToggle({
+    Name = "Mode 3: Auto Kill Only",
+    CurrentValue = false,
+    Callback = function(Value)
+        if Value then
+            AutoKillEnabled = true
+            AutoKillLoop(nil)
+        else
+            AutoKillEnabled = false
+        end
+    end,
+})
+
+-- Auto Rejoin loop
 task.spawn(function()
     while true do
-        task.wait(30) -- wait 30 seconds
-        TeleportService:Teleport(game.PlaceId, LocalPlayer)
+        task.wait(30)
+        if RejoinEnabled then
+            TeleportService:Teleport(game.PlaceId, LocalPlayer)
+        end
     end
 end)
+
+-- Auto-enable Mode 1 if memory says ON
+if MemoryState then
+    RejoinEnabled = true
+    AutoKillEnabled = true
+    AutoKillLoop(LockPosition)
+    StartAutoSizeNaN()
+end
