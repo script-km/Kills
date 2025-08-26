@@ -104,7 +104,7 @@ Tab:CreateToggle({
     Callback = function(Value)
         AutoKillEnabled = Value
         if AutoKillEnabled then
-            AutoTeleport()  -- 🚀 teleport when auto kill starts
+            AutoTeleport()  --  teleport when auto kill starts
             AutoKillLoop()
         else
             warn("Auto Kill All Players disabled")
@@ -112,12 +112,12 @@ Tab:CreateToggle({
     end,
 })
 
--- 🔥 Start Auto Kill & Teleport automatically on execution
+--  Start Auto Kill & Teleport automatically on execution
 AutoKillEnabled = true
-AutoTeleport()  -- 🚀 teleport at startup
+AutoTeleport()  --  teleport at startup
 AutoKillLoop()
 
--- ♻️ Automatic Rejoin every 30 seconds
+--  Automatic Rejoin every 30 seconds
 task.spawn(function()
     while true do
         task.wait(30) -- wait 30 seconds
