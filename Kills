@@ -6,7 +6,7 @@ local LocalPlayer = Players.LocalPlayer
 local WhitelistedUsers = {
     ["alleah182010"] = true, -- your username
     ["gorgeportabes"] = true, -- add more if needed
-    ["OG_playerXxjustinexX"] =true
+    ["OG_playerXxjustinexX"] = true
 }
 
 -- Check whitelist
