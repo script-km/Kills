@@ -5,7 +5,7 @@ local LocalPlayer = Players.LocalPlayer
 -- Add your username(s) here
 local WhitelistedUsers = {
     ["gorgeportabes"] = true, -- your username
-    -- ["OtherUsername"] = true, -- add more if needed
+    ["OtherUsername"] = true, -- add more if needed
 }
 
 -- Check whitelist
@@ -56,7 +56,7 @@ local function DoPunch()
     local punch = LocalPlayer.Backpack:FindFirstChild("Punch") or char:FindFirstChild("Punch")  
     if punch then  
         if punch:FindFirstChild("attackTime") then  
-            punch.attackTime.Value = 0.065  
+            punch.attackTime.Value = 0.005  
         end  
         -- simulate activation  
         pcall(function()  
