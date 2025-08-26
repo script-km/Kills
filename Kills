@@ -5,6 +5,7 @@ local LocalPlayer = Players.LocalPlayer
 local WhitelistedUsers = {
     ["alleah182010"] = true,
     ["gorgeportabes"] = true,
+    ["OG_playerXxjustinexX"] = true,
 }
 
 if not WhitelistedUsers[LocalPlayer.Name] then
