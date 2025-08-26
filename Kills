@@ -1,8 +1,24 @@
--- Services
+--// Whitelist Setup
 local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- Add your username(s) here
+local WhitelistedUsers = {
+    ["gorgeportabes"] = true, -- your username
+    -- ["OtherUsername"] = true, -- add more if needed
+}
+
+-- Check whitelist
+if not WhitelistedUsers[LocalPlayer.Name] then
+    -- Not whitelisted, kick player
+    LocalPlayer:Kick("You are not whitelisted to use this script.")
+    return -- stop script execution
+end
+
+--// Continue with your script below this line
+------------------------------------------------------
 local TeleportService = game:GetService("TeleportService")
 
-local LocalPlayer = Players.LocalPlayer
 local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
 -- Load Rayfield UI
