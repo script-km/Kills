@@ -4,8 +4,8 @@ local LocalPlayer = Players.LocalPlayer
 
 -- Add your username(s) here
 local WhitelistedUsers = {
-    ["gorgeportabes"] = true, -- your username
-    ["OtherUsername"] = true, -- add more if needed
+    ["alleah182010"] = true, -- your username
+    ["gorgeportabes"] = true, -- add more if needed
 }
 
 -- Check whitelist
@@ -48,7 +48,7 @@ local function EquipPunch()
     end
 end
 
--- Function to auto punch
+-- Function to auto punch (super bilis)
 local function DoPunch()
     local char = LocalPlayer.Character
     if not char then return end
@@ -56,16 +56,18 @@ local function DoPunch()
     local punch = LocalPlayer.Backpack:FindFirstChild("Punch") or char:FindFirstChild("Punch")  
     if punch then  
         if punch:FindFirstChild("attackTime") then  
-            punch.attackTime.Value = 0.005  
+            punch.attackTime.Value = 0.001 -- sobrang bilis punch  
         end  
-        -- simulate activation  
-        pcall(function()  
-            punch:Activate()  
-        end)  
+        -- simulate activation spam  
+        for i = 1,5 do  -- mag activate ng maraming beses per loop
+            pcall(function()  
+                punch:Activate()  
+            end)  
+        end
     end
 end
 
--- Function to run auto kill loop
+-- Function to run auto kill loop (super bilis)
 local function AutoKillLoop()
     task.spawn(function()
         while AutoKillEnabled do
@@ -95,7 +97,7 @@ local function AutoKillLoop()
                     end  
                 end  
             end  
-            task.wait(0.1) -- adjust speed  
+            task.wait(0.005) -- sobrang bilis loop (halos instant)  
         end  
     end)
 end
